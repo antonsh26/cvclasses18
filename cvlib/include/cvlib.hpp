@@ -11,11 +11,21 @@
 
 namespace cvlib
 {
-/// \brief Split and merge algorithm for image segmentation
-/// \param image, in - input image
-/// \param stddev, in - threshold to treat regions as homogeneous
-/// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev);
+struct region
+{
+    std::vector<region> childs;
+    bool validity;
+    cv::Rect roi;
+    cv::Mat label;
+};
+
+bool mergeTwoRegion(region& parent, const cv::Mat& src, region& r1, region& r2, double stddev);
+
+void merge_image(const cv::Mat& src, region& r, double stddev);
+
+region split_image(const cv::Mat& src, cv::Rect roi, double stddev);
+
+void draw(cv::Mat& img, region& r);
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
