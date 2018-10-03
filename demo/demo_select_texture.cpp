@@ -4,6 +4,7 @@
  * @author Anonymous
  */
 
+#include <chrono>
 #include <opencv2/opencv.hpp>
 
 #include <cvlib.hpp>
@@ -60,11 +61,23 @@ int demo_select_texture(int argc, char* argv[])
         const cv::Rect roi = {data.tl, data.br};
         if (roi.area())
         {
+            auto start = std::chrono::high_resolution_clock::now();
             const auto mask = cvlib::select_texture(frame_gray, roi, eps);
+            auto finish = std::chrono::high_resolution_clock::now();
+            double seconds = std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count();
+
             const auto segmented = mask.clone();
             frame_gray.copyTo(segmented, mask);
-            cv::imshow(demo_wnd, segmented);
             cv::rectangle(data.image, data.tl, data.br, cv::Scalar(0, 0, 255));
+            
+            // frame per second
+            cv::rectangle(segmented, cv::Point(10, 2), cv::Point(100, 20), cv::Scalar(255, 255, 255), -1);
+            std::stringstream ss;
+            ss << "FPS: " << (int) (1000.0 / seconds);
+            std::string frameNumberString = ss.str();
+            putText(segmented, frameNumberString.c_str(), cv::Point(15, 15), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+            
+            cv::imshow(demo_wnd, segmented);
         }
         cv::imshow(data.wnd, data.image);
     }
