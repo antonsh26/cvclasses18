@@ -29,7 +29,9 @@ class motion_segmentation : public cv::BackgroundSubtractor
 {
     public:
     /// \brief ctor
-    motion_segmentation();
+    motion_segmentation()
+    {
+    }
 
     /// \see cv::BackgroundSubtractor::apply
     void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate = -1) override;
@@ -37,12 +39,22 @@ class motion_segmentation : public cv::BackgroundSubtractor
     /// \see cv::BackgroundSubtractor::BackgroundSubtractor
     void getBackgroundImage(cv::OutputArray backgroundImage) const override
     {
-        backgroundImage.assign(bg_model_);
+        backgroundImage.assign(ut_);
+    }
+
+    void setVarThreshold(int threshold)
+    {
+        T = threshold;
     }
 
     private:
-    cv::Mat bg_model_;
+    bool init = false; //!< Initialization flag
+    cv::Mat ut_; //!< Mean image
+    cv::Mat bt_; //!< Dispersion image
+    int T; //!< Threshold
 };
+
+cv::Ptr<motion_segmentation> createBackgroundSubtractor1G();
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
