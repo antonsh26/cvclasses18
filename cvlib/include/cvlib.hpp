@@ -66,6 +66,22 @@ class corner_detector_fast : public cv::Feature2D
     {
         return "FAST_Binary";
     }
+
+    // \brief Set points
+    inline void setPoints(size_t points)
+    {
+        points_ = points > 3 ? points : 3;
+    }
+    // \brief Set threshold
+    inline void setThreshold(uint8_t threshhold)
+    {
+        threshhold_ = threshhold;
+    }
+
+    private:
+    bool testPixel(cv::Mat& image, cv::Point2i point);
+    uint8_t threshhold_ = 40;
+    size_t points_ = 12;
 };
 } // namespace cvlib
 
